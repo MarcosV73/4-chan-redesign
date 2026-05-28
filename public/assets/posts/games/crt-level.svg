@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">CRT level</title>
+  <desc id="desc">A CRT screen showing a simple pixel platform level.</desc>
+  <defs>
+    <radialGradient id="screen" cx=".45" cy=".4" r=".58">
+      <stop offset="0" stop-color="#91a9d4"/>
+      <stop offset=".58" stop-color="#405f91"/>
+      <stop offset="1" stop-color="#140d0d"/>
+    </radialGradient>
+    <pattern id="lines" width="1" height="6" patternUnits="userSpaceOnUse">
+      <rect width="1" height="2" fill="#000" opacity=".18"/>
+    </pattern>
+  </defs>
+  <rect width="640" height="360" fill="#201614"/>
+  <rect x="82" y="48" width="476" height="264" rx="30" fill="#2d1718" stroke="#8b664a" stroke-width="10"/>
+  <rect x="118" y="82" width="404" height="186" rx="18" fill="url(#screen)"/>
+  <rect x="118" y="82" width="404" height="186" rx="18" fill="url(#lines)"/>
+  <rect x="152" y="220" width="88" height="18" fill="#c9953d"/>
+  <rect x="278" y="184" width="78" height="18" fill="#c9953d"/>
+  <rect x="396" y="142" width="72" height="18" fill="#c9953d"/>
+  <rect x="178" y="184" width="28" height="28" fill="#fff8e8"/>
+  <circle cx="326" cy="152" r="17" fill="#78a957"/>
+  <path d="M456 112l18 18-18 18-18-18z" fill="#7a2933"/>
+  <circle cx="462" cy="292" r="8" fill="#f5e6c4"/>
+  <circle cx="492" cy="292" r="8" fill="#78a957"/>
+</svg>

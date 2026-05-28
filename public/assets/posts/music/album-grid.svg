@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Album grid</title>
+  <desc id="desc">A wall of strange album covers and a small audio waveform.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1">
+      <stop offset="0" stop-color="#2d1718"/>
+      <stop offset="1" stop-color="#211414"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg)"/>
+  <rect x="76" y="48" width="488" height="264" rx="16" fill="#f5e6c4" stroke="#8b664a" stroke-width="6"/>
+  <g transform="translate(108 80)">
+    <rect width="86" height="86" fill="#7a2933"/>
+    <rect x="112" width="86" height="86" fill="#405f91"/>
+    <rect x="224" width="86" height="86" fill="#4d8a32"/>
+    <rect x="336" width="86" height="86" fill="#6f5b8d"/>
+    <rect y="112" width="86" height="86" fill="#c9953d"/>
+    <rect x="112" y="112" width="86" height="86" fill="#8f4d70"/>
+    <rect x="224" y="112" width="86" height="86" fill="#2d1718"/>
+    <rect x="336" y="112" width="86" height="86" fill="#607880"/>
+  </g>
+  <path d="M130 264v-34m24 34v-64m24 64v-46m24 46v-78m24 78v-28m24 28v-92m24 92v-50m24 50v-68m24 68v-36m24 36v-82m24 82v-44m24 44v-58m24 58v-26m24 26v-74" stroke="#2d1718" stroke-width="10" stroke-linecap="round"/>
+</svg>

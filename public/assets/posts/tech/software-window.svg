@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Old web software window</title>
+  <desc id="desc">A retro desktop window with code panels and green phosphor light.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#162118"/>
+      <stop offset="0.55" stop-color="#2e1c22"/>
+      <stop offset="1" stop-color="#5b6f34"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0v32" fill="none" stroke="#fff8e8" stroke-opacity=".08"/>
+    </pattern>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg)"/>
+  <rect width="640" height="360" fill="url(#grid)"/>
+  <circle cx="524" cy="72" r="70" fill="#78a957" opacity=".28"/>
+  <rect x="78" y="58" width="486" height="250" rx="14" fill="#fff8e8" stroke="#2d1718" stroke-width="8"/>
+  <rect x="78" y="58" width="486" height="38" rx="14" fill="#7a2933"/>
+  <circle cx="104" cy="77" r="6" fill="#f5e6c4"/>
+  <circle cx="126" cy="77" r="6" fill="#c9953d"/>
+  <circle cx="148" cy="77" r="6" fill="#78a957"/>
+  <rect x="108" y="122" width="186" height="152" fill="#201614" stroke="#8b664a" stroke-width="3"/>
+  <rect x="320" y="122" width="196" height="22" fill="#dfe9c4"/>
+  <rect x="320" y="160" width="156" height="14" fill="#c0a37a"/>
+  <rect x="320" y="188" width="184" height="14" fill="#c0a37a"/>
+  <rect x="320" y="216" width="128" height="14" fill="#c0a37a"/>
+  <path d="M134 148l34 32-34 32M218 146l-30 68" fill="none" stroke="#78a957" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M72 306h488" stroke="#2d1718" stroke-opacity=".25" stroke-width="10"/>
+</svg>

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Pixel gallery</title>
+  <desc id="desc">A small old internet gallery with pixel art frames and critique pins.</desc>
+  <defs>
+    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="M28 0H0v28" fill="none" stroke="#fff8e8" stroke-opacity=".12"/>
+    </pattern>
+  </defs>
+  <rect width="640" height="360" fill="#251b22"/>
+  <rect width="640" height="360" fill="url(#grid)"/>
+  <rect x="74" y="58" width="492" height="242" rx="16" fill="#f5e6c4" stroke="#7a2933" stroke-width="7"/>
+  <rect x="110" y="92" width="128" height="128" fill="#405f91"/>
+  <rect x="258" y="92" width="128" height="128" fill="#8f4d70"/>
+  <rect x="406" y="92" width="128" height="128" fill="#4d8a32"/>
+  <path d="M138 172h72v20h-72zM286 124h72v72h-72zM434 116h28v28h28v28h-28v28h-28v-28h-28v-28h28z" fill="#fff8e8"/>
+  <circle cx="122" cy="250" r="9" fill="#7a2933"/>
+  <circle cx="270" cy="250" r="9" fill="#7a2933"/>
+  <circle cx="418" cy="250" r="9" fill="#7a2933"/>
+  <path d="M140 250h82M288 250h82M436 250h82" stroke="#2d1718" stroke-width="8" stroke-linecap="round"/>
+</svg>

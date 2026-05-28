@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Old web chaos</title>
+  <desc id="desc">A chaotic old web page collage with stickers, windows, and strange shapes.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#2d1718"/>
+      <stop offset=".55" stop-color="#7a2933"/>
+      <stop offset="1" stop-color="#4d8a32"/>
+    </linearGradient>
+    <pattern id="checker" width="32" height="32" patternUnits="userSpaceOnUse">
+      <rect width="16" height="16" fill="#fff8e8" opacity=".1"/>
+      <rect x="16" y="16" width="16" height="16" fill="#fff8e8" opacity=".1"/>
+    </pattern>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg)"/>
+  <rect width="640" height="360" fill="url(#checker)"/>
+  <rect x="72" y="66" width="216" height="130" rx="12" fill="#fff8e8" stroke="#2d1718" stroke-width="6"/>
+  <rect x="350" y="94" width="190" height="170" rx="12" fill="#f5e6c4" stroke="#2d1718" stroke-width="6" transform="rotate(5 445 179)"/>
+  <path d="M110 124h130M110 154h82M386 154h108M386 188h82M386 222h126" stroke="#7a2933" stroke-width="9" stroke-linecap="round"/>
+  <path d="M302 72l30 58-64-10z" fill="#c9953d" stroke="#2d1718" stroke-width="5"/>
+  <circle cx="176" cy="250" r="36" fill="#405f91" stroke="#fff8e8" stroke-width="6"/>
+  <path d="M250 270c72-78 126 48 204-46" fill="none" stroke="#fff8e8" stroke-width="10" stroke-linecap="round"/>
+</svg>

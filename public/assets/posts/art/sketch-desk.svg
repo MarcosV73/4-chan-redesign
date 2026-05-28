@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Sketch desk</title>
+  <desc id="desc">Loose sketches on paper with critique marks and digital color swatches.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#fff8e8"/>
+      <stop offset=".55" stop-color="#f0dfbf"/>
+      <stop offset="1" stop-color="#8f4d70"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg)"/>
+  <rect x="86" y="42" width="290" height="262" rx="12" fill="#fff8e8" stroke="#8b664a" stroke-width="5" transform="rotate(-4 231 173)"/>
+  <rect x="336" y="82" width="164" height="206" rx="12" fill="#2d1718" stroke="#c0a37a" stroke-width="5" transform="rotate(5 418 185)"/>
+  <path d="M166 128c54-58 134 6 72 76-46 54-118 28-88-28 18-33 74-16 58 18" fill="none" stroke="#2d1718" stroke-width="8" stroke-linecap="round"/>
+  <path d="M126 244h168M136 266h112" stroke="#8f4d70" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="386" cy="134" r="18" fill="#8f4d70"/>
+  <circle cx="432" cy="154" r="18" fill="#c9953d"/>
+  <circle cx="406" cy="202" r="18" fill="#78a957"/>
+  <path d="M376 248h104" stroke="#fff8e8" stroke-width="9" stroke-linecap="round"/>
+</svg>

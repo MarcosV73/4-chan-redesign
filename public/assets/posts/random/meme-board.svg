@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">
+  <title id="title">Meme board</title>
+  <desc id="desc">A strange anonymous board wall with pinned notes and noisy gradients.</desc>
+  <defs>
+    <radialGradient id="bg" cx=".28" cy=".25" r=".82">
+      <stop offset="0" stop-color="#fff8e8"/>
+      <stop offset=".38" stop-color="#c9953d"/>
+      <stop offset="1" stop-color="#2d1718"/>
+    </radialGradient>
+    <pattern id="noise" width="18" height="18" patternUnits="userSpaceOnUse">
+      <path d="M0 9h18M9 0v18" stroke="#2d1718" stroke-opacity=".08"/>
+    </pattern>
+  </defs>
+  <rect width="640" height="360" fill="url(#bg)"/>
+  <rect width="640" height="360" fill="url(#noise)"/>
+  <rect x="92" y="58" width="456" height="244" rx="14" fill="#f5e6c4" stroke="#8b664a" stroke-width="7"/>
+  <g stroke="#2d1718" stroke-width="5">
+    <rect x="122" y="90" width="110" height="78" fill="#fff8e8"/>
+    <rect x="264" y="84" width="102" height="92" fill="#dfe9c4"/>
+    <rect x="398" y="102" width="112" height="72" fill="#f0dfbf"/>
+    <rect x="154" y="202" width="124" height="64" fill="#f0dfbf"/>
+    <rect x="330" y="204" width="142" height="62" fill="#fff8e8"/>
+  </g>
+  <circle cx="500" cy="80" r="16" fill="#7a2933"/>
+  <path d="M140 118h64M282 122h62M416 132h64M174 232h72M354 232h92" stroke="#7a2933" stroke-width="8" stroke-linecap="round"/>
+</svg>

@@ -244,6 +244,9 @@ const state = {
   category: "all",
   query: "",
   editingProfile: false,
+  profileTab: "posts",
+  profileAvatarDraft: null,
+  profileGifDraft: null,
   composeBoard: "b",
   pendingCompose: null,
   composeAttachment: null,
@@ -276,6 +279,88 @@ const normalize = (value) =>
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, "");
 
+const postImageThemeKeywords = {
+  tech: ["software", "app", "apps", "linux", "hardware", "codigo", "code", "internet", "computador", "script", "setup", "rss"],
+  games: ["jogo", "jogos", "games", "game", "console", "pc", "mod", "mods", "nostalgia", "memoria", "titulo"],
+  music: ["musica", "album", "albuns", "mix", "cassette", "banda", "sintetizador", "baixo", "winamp"],
+  art: ["arte", "desenho", "critica", "pintura", "sketch", "sketchbook", "digital", "wip"],
+  random: ["meme", "estranho", "estranha", "caos", "anon", "anonymous", "oldweb", "liminal", "arg", "misterio"],
+};
+
+const boardImageThemes = {
+  b: "random",
+  g: "tech",
+  v: "games",
+  mu: "music",
+  ic: "art",
+  diy: "tech",
+  x: "random",
+  lit: "art",
+};
+
+const postImageAssets = {
+  tech: [
+    {
+      src: "/assets/posts/tech/software-window.svg",
+      label: "software-window.svg",
+      alt: "Janela de software retro com paineis de codigo",
+    },
+    {
+      src: "/assets/posts/tech/hardware-desk.svg",
+      label: "hardware-desk.svg",
+      alt: "Mesa com computador antigo, cabos e placas",
+    },
+  ],
+  games: [
+    {
+      src: "/assets/posts/games/memory-console.svg",
+      label: "memory-console.svg",
+      alt: "Console retro sob luz de CRT",
+    },
+    {
+      src: "/assets/posts/games/crt-level.svg",
+      label: "crt-level.svg",
+      alt: "Tela CRT com fase de jogo em pixel art",
+    },
+  ],
+  music: [
+    {
+      src: "/assets/posts/music/cassette-night.svg",
+      label: "cassette-night.svg",
+      alt: "Cassette retro em uma sala de musica noturna",
+    },
+    {
+      src: "/assets/posts/music/album-grid.svg",
+      label: "album-grid.svg",
+      alt: "Grade de capas de albuns com forma de onda",
+    },
+  ],
+  art: [
+    {
+      src: "/assets/posts/art/sketch-desk.svg",
+      label: "sketch-desk.svg",
+      alt: "Mesa de desenho com sketches e amostras de cor",
+    },
+    {
+      src: "/assets/posts/art/pixel-gallery.svg",
+      label: "pixel-gallery.svg",
+      alt: "Galeria old web com quadros de pixel art",
+    },
+  ],
+  random: [
+    {
+      src: "/assets/posts/random/oldweb-chaos.svg",
+      label: "oldweb-chaos.svg",
+      alt: "Colagem caotica de janelas e formas old web",
+    },
+    {
+      src: "/assets/posts/random/meme-board.svg",
+      label: "meme-board.svg",
+      alt: "Mural anonimo com notas, memes e textura ruidosa",
+    },
+  ],
+};
+
 const escapeHTML = (value) =>
   String(value).replace(/[&<>"']/g, (char) => {
     const entities = {
@@ -290,6 +375,76 @@ const escapeHTML = (value) =>
 
 const boardByCode = (code) => boards.find((board) => board.code === code) || boards[0];
 const postById = (id) => posts.find((post) => post.id === id);
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function hasKeyword(text, keyword) {
+  const normalizedKeyword = normalize(keyword);
+  const pattern = new RegExp(`(^|[^a-z0-9])${escapeRegExp(normalizedKeyword)}([^a-z0-9]|$)`);
+  return pattern.test(text);
+}
+
+function getPostImageContent(post) {
+  const board = boardByCode(post.boardCode);
+  const commentText = (post.commentsList || []).map((comment) => comment.text).join(" ");
+  return normalize(
+    [
+      post.subject,
+      post.text,
+      post.boardCode,
+      ...(post.tags || []),
+      board.code,
+      board.title,
+      board.category,
+      board.desc,
+      ...board.tags,
+      commentText,
+    ]
+      .filter(Boolean)
+      .join(" ")
+  );
+}
+
+function getStableImageIndex(post, assetCount) {
+  if (!assetCount) return -1;
+  const seed = `${post.id}|${post.subject || ""}|${post.text || ""}`;
+  let hash = 0;
+  for (const char of seed) {
+    hash = (hash * 31 + char.charCodeAt(0)) % 2147483647;
+  }
+  return Math.abs(hash) % assetCount;
+}
+
+function getImageByPostContent(post) {
+  const content = getPostImageContent(post);
+  const boardTheme = boardImageThemes[post.boardCode];
+  const [theme, score] = Object.entries(postImageThemeKeywords)
+    .map(([themeName, keywords]) => {
+      const keywordScore = keywords.reduce((score, keyword) => score + (hasKeyword(content, keyword) ? 1 : 0), 0);
+      const boardScore = boardTheme === themeName ? 1 : 0;
+      return [themeName, keywordScore + boardScore];
+    })
+    .sort((a, b) => b[1] - a[1])[0] || ["random", 0];
+  const selectedTheme = score > 0 && postImageAssets[theme]?.length ? theme : "random";
+  const assets = postImageAssets[selectedTheme] || postImageAssets.random || [];
+  const asset = assets[getStableImageIndex(post, assets.length)];
+
+  if (!asset) return null;
+
+  return {
+    ...asset,
+    type: "contextual",
+    theme: selectedTheme,
+    contextual: true,
+  };
+}
+
+function getRenderablePostImage(post) {
+  if (post.image?.url || post.image?.type === "gif") return post.image;
+  return getImageByPostContent(post);
+}
 
 function getRoute() {
   const hash = location.hash.replace(/^#/, "") || "home";
@@ -426,9 +581,7 @@ function updateHeader() {
 
   if (currentUser) {
     authButton.innerHTML = `
-      <span class="mini-avatar" style="--avatar-bg:${currentUser.avatarBg}">${escapeHTML(
-        currentUser.initials
-      )}</span>
+      ${renderMiniAvatar(currentUser)}
       <span>Perfil</span>
     `;
   } else {
@@ -523,11 +676,17 @@ function renderBoardCard(board, compact = false) {
 function renderPostMedia(image) {
   if (!image) return "";
 
-  if (image.url) {
+  const source = image.url || image.src;
+  const label = image.label || "post-image";
+
+  if (source) {
     return `
-      <figure class="post-media is-real-media media-${escapeHTML(image.type)}">
-        <img src="${image.url}" alt="Anexo: ${escapeHTML(image.label)}" />
-        <figcaption>${escapeHTML(image.label)}</figcaption>
+      <figure
+        class="post-media is-real-media ${image.contextual ? "is-contextual" : ""} media-${escapeHTML(image.type || "image")} ${image.theme ? `theme-${escapeHTML(image.theme)}` : ""}"
+        ${image.contextual ? `data-contextual-theme="${escapeHTML(image.theme)}"` : ""}
+      >
+        <img src="${escapeHTML(source)}" alt="${escapeHTML(image.alt || `Anexo: ${label}`)}" loading="lazy" />
+        <figcaption>${escapeHTML(label)}</figcaption>
       </figure>
     `;
   }
@@ -547,12 +706,107 @@ function renderPostMedia(image) {
   `;
 }
 
+function getUserAvatarMedia(user) {
+  return user?.avatarMedia?.url ? user.avatarMedia : null;
+}
+
 function renderAvatar(user, extraClass = "") {
+  const avatarMedia = getUserAvatarMedia(user);
+  if (avatarMedia) {
+    return `
+      <span class="avatar ${extraClass} has-media" style="--avatar-bg:${user.avatarBg}">
+        <img src="${escapeHTML(avatarMedia.url)}" alt="Avatar de ${escapeHTML(user.name)}" loading="lazy" />
+      </span>
+    `;
+  }
+
   return `
     <span class="avatar ${extraClass}" style="--avatar-bg:${user.avatarBg}">
       ${escapeHTML(user.initials)}
     </span>
   `;
+}
+
+function renderMiniAvatar(user) {
+  const avatarMedia = getUserAvatarMedia(user);
+  if (avatarMedia) {
+    return `
+      <span class="mini-avatar has-media" style="--avatar-bg:${user.avatarBg}">
+        <img src="${escapeHTML(avatarMedia.url)}" alt="" />
+      </span>
+    `;
+  }
+
+  return `
+    <span class="mini-avatar" style="--avatar-bg:${user.avatarBg}">
+      ${escapeHTML(user.initials)}
+    </span>
+  `;
+}
+
+function renderProfileGif(media) {
+  if (!media?.url) return "";
+
+  return `
+    <figure class="profile-gif-frame">
+      <img src="${escapeHTML(media.url)}" alt="GIF do perfil de ${escapeHTML(currentUser.name)}" loading="lazy" />
+      <figcaption>${escapeHTML(media.label || "profile.gif")}</figcaption>
+    </figure>
+  `;
+}
+
+function renderProfileMediaPreview(media, emptyLabel, removeAttribute) {
+  return `
+    <div class="profile-media-preview ${media?.url ? "has-media" : ""}">
+      ${
+        media?.url
+          ? `<img src="${escapeHTML(media.url)}" alt="Preview de ${escapeHTML(media.label || emptyLabel)}" />`
+          : `<span>${escapeHTML(emptyLabel)}</span>`
+      }
+      ${
+        media?.url
+          ? `<button class="tool-button" type="button" ${removeAttribute}>Remover</button>`
+          : ""
+      }
+    </div>
+  `;
+}
+
+function isImageFile(file) {
+  return Boolean(file?.type?.startsWith("image/") || /\.(gif|png|jpe?g|webp)$/i.test(file?.name || ""));
+}
+
+function isGifFile(file) {
+  return Boolean(file?.type === "image/gif" || /\.gif$/i.test(file?.name || ""));
+}
+
+function readProfileMediaFile(file, callback) {
+  if (!isImageFile(file)) return;
+
+  const reader = new FileReader();
+  reader.addEventListener("load", () => {
+    callback({
+      url: String(reader.result),
+      label: file.name,
+      mime: file.type,
+      isGif: isGifFile(file),
+    });
+  });
+  reader.readAsDataURL(file);
+}
+
+function syncUserSnapshots(previousHandle, user) {
+  posts.forEach((post) => {
+    if (post.author.handle === previousHandle) {
+      post.author = { ...post.author, ...user };
+    }
+
+    post.commentsList.forEach((comment) => {
+      if (comment.author.handle === previousHandle) {
+        comment.author = { ...comment.author, ...user };
+      }
+    });
+  });
 }
 
 function renderActionButton(post, action, label, count, active) {
@@ -575,6 +829,7 @@ function renderActionButton(post, action, label, count, active) {
 
 function renderPostCard(post, options = {}) {
   const board = boardByCode(post.boardCode);
+  const postImage = getRenderablePostImage(post);
 
   return `
     <article class="post-card ${options.full ? "is-full" : ""}" data-post-card="${post.id}">
@@ -592,7 +847,7 @@ function renderPostCard(post, options = {}) {
         </header>
         <h3 class="post-subject">${escapeHTML(post.subject || "Thread")}</h3>
         <p class="post-text">${escapeHTML(post.text)}</p>
-        ${renderPostMedia(post.image)}
+        ${renderPostMedia(postImage)}
         <div class="post-actions" aria-label="Acoes do post">
           ${renderActionButton(post, "like", "Curtir", post.stats.likes, post.liked)}
           ${renderActionButton(post, "comment", "Comentar", post.stats.comments, false)}
@@ -620,6 +875,138 @@ function renderPostList(list) {
   }
 
   return `<div class="feed-list">${list.map((post) => renderPostCard(post)).join("")}</div>`;
+}
+
+function getUserComments(handle) {
+  return posts.flatMap((post) =>
+    (post.commentsList || [])
+      .filter((comment) => comment.author.handle === handle)
+      .map((comment) => ({
+        comment,
+        post,
+        board: boardByCode(post.boardCode),
+      }))
+  );
+}
+
+function renderProfileTabs({ userPosts, userComments, savedPosts, likedPosts }) {
+  const tabs = [
+    { id: "posts", label: "Posts", count: userPosts.length },
+    { id: "comments", label: "Comentarios", count: userComments.length },
+    { id: "saved", label: "Salvos", count: savedPosts.length },
+    { id: "liked", label: "Curtidos", count: likedPosts.length },
+  ];
+
+  return `
+    <div class="profile-tabs" role="tablist" aria-label="Conteudo do perfil">
+      ${tabs
+        .map(
+          (tab) => `
+            <button
+              class="${state.profileTab === tab.id ? "is-active" : ""}"
+              type="button"
+              role="tab"
+              aria-selected="${state.profileTab === tab.id}"
+              data-profile-tab="${tab.id}"
+            >
+              <span>${escapeHTML(tab.label)}</span>
+              <b>${tab.count}</b>
+            </button>
+          `
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function renderProfileComments(comments) {
+  if (!comments.length) {
+    return `
+      <div class="empty-state">
+        <strong>Nenhum comentario seu ainda.</strong>
+        <p>Abra uma thread e responda para seu historico aparecer aqui.</p>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="comment-history-list">
+      ${comments
+        .map(
+          ({ comment, post, board }) => `
+            <article class="profile-comment-card">
+              <div class="profile-comment-meta">
+                <span>/${escapeHTML(board.code)}/</span>
+                <span>${escapeHTML(comment.time)}</span>
+              </div>
+              <p>${escapeHTML(comment.text)}</p>
+              <div class="profile-comment-thread">
+                <strong>${escapeHTML(post.subject || "Thread")}</strong>
+                <button class="thread-link" type="button" data-post="${post.id}">Abrir thread</button>
+              </div>
+            </article>
+          `
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function renderProfileTabPanel({ userPosts, userComments, savedPosts, likedPosts }) {
+  if (state.profileTab === "comments") {
+    return `
+      <section class="timeline-column profile-posts">
+        <div class="section-title-row">
+          <div>
+            <p class="eyebrow">comentarios do usuario</p>
+            <h2>${userComments.length} comentarios</h2>
+          </div>
+        </div>
+        ${renderProfileComments(userComments)}
+      </section>
+    `;
+  }
+
+  if (state.profileTab === "saved") {
+    return `
+      <section class="timeline-column profile-posts">
+        <div class="section-title-row">
+          <div>
+            <p class="eyebrow">posts salvos</p>
+            <h2>${savedPosts.length} salvos</h2>
+          </div>
+        </div>
+        ${renderPostList(savedPosts)}
+      </section>
+    `;
+  }
+
+  if (state.profileTab === "liked") {
+    return `
+      <section class="timeline-column profile-posts">
+        <div class="section-title-row">
+          <div>
+            <p class="eyebrow">posts curtidos</p>
+            <h2>${likedPosts.length} curtidos</h2>
+          </div>
+        </div>
+        ${renderPostList(likedPosts)}
+      </section>
+    `;
+  }
+
+  return `
+    <section class="timeline-column profile-posts">
+      <div class="section-title-row">
+        <div>
+          <p class="eyebrow">posts do usuario</p>
+          <h2>${userPosts.length} publicacoes</h2>
+        </div>
+        <button class="small-button" type="button" data-open-compose>Novo post</button>
+      </div>
+      ${renderPostList(userPosts)}
+    </section>
+  `;
 }
 
 function getPostScore(post) {
@@ -737,6 +1124,20 @@ function renderHome() {
           <button class="primary-button" type="button" data-open-compose>Novo post</button>
           <a class="secondary-button" href="#boards">Explorar boards</a>
         </div>
+        <div class="welcome-gif" aria-label="GIF de boas vindas">
+          <div class="welcome-gif-window" aria-hidden="true">
+            <span class="welcome-gif-title">bem-vindo.gif</span>
+            <div class="welcome-gif-scene">
+              <span class="welcome-gif-logo">4chan</span>
+              <span class="welcome-gif-badge">BEM-VINDO</span>
+              <span class="welcome-gif-orbit"></span>
+              <span class="welcome-gif-cursor"></span>
+              <span class="welcome-gif-star star-a"></span>
+              <span class="welcome-gif-star star-b"></span>
+              <span class="welcome-gif-star star-c"></span>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="hero-board-stack">
         <p class="eyebrow">foruns populares</p>
@@ -765,12 +1166,13 @@ function renderHome() {
   `;
 }
 
-function renderProfileStats(userPosts) {
-  const likes = userPosts.reduce((total, post) => total + post.stats.likes, 0);
-  const replies = userPosts.reduce((total, post) => total + post.commentsList.length, 0);
-  const savedThreads = posts.filter((post) => post.saved).length;
+function renderProfileStats(userPosts, userComments, savedPosts) {
   const boardCount = new Set(userPosts.map((post) => post.boardCode)).size;
-  const lastPosts = userPosts.slice(0, 2);
+  const recentActivityPosts = userPosts.length
+    ? userPosts.slice(0, 2)
+    : savedPosts.length
+      ? savedPosts.slice(0, 2)
+      : userComments.map(({ post }) => post).slice(0, 2);
 
   return `
     <section class="profile-stats-grid" aria-label="Resumo do perfil">
@@ -779,12 +1181,12 @@ function renderProfileStats(userPosts) {
         <strong>${userPosts.length}</strong>
       </article>
       <article>
-        <span>curtidas</span>
-        <strong>${likes}</strong>
+        <span>comentarios</span>
+        <strong>${userComments.length}</strong>
       </article>
       <article>
-        <span>respostas</span>
-        <strong>${replies}</strong>
+        <span>salvos</span>
+        <strong>${savedPosts.length}</strong>
       </article>
       <article>
         <span>boards</span>
@@ -794,13 +1196,13 @@ function renderProfileStats(userPosts) {
     <section class="profile-activity-panel">
       <div>
         <p class="eyebrow">ultimas interacoes</p>
-        <strong>${savedThreads} threads salvas</strong>
-        <span>${userPosts.length ? "Voce ja deixou rastro no catalogo." : "Seu historico aparece aqui depois do primeiro post."}</span>
+        <strong>${savedPosts.length} threads salvas</strong>
+        <span>${userComments.length ? "Seus comentarios tambem ficam guardados aqui." : "Seu historico aparece aqui depois das primeiras interacoes."}</span>
       </div>
       <div class="mini-thread-list">
         ${
-          lastPosts.length
-            ? lastPosts.map((post) => renderMiniThreadButton(post)).join("")
+          recentActivityPosts.length
+            ? recentActivityPosts.map((post) => renderMiniThreadButton(post)).join("")
             : `
               <button type="button" data-open-compose>
                 <span>novo</span>
@@ -1003,12 +1405,20 @@ function renderProfile() {
   }
 
   const userPosts = filteredPosts({ handle: currentUser.handle });
+  const userComments = getUserComments(currentUser.handle);
+  const savedPosts = posts.filter((post) => post.saved);
+  const likedPosts = posts.filter((post) => post.liked);
+  const validProfileTabs = ["posts", "comments", "saved", "liked"];
+  if (!validProfileTabs.includes(state.profileTab)) state.profileTab = "posts";
+  const profileAvatarUser = state.editingProfile
+    ? { ...currentUser, avatarMedia: state.profileAvatarDraft }
+    : currentUser;
 
   app.innerHTML = `
     <section class="profile-page">
       <div class="profile-cover"></div>
       <div class="profile-card">
-        ${renderAvatar(currentUser, "is-profile")}
+        ${renderAvatar(profileAvatarUser, "is-profile")}
         ${
           state.editingProfile
             ? `
@@ -1025,6 +1435,20 @@ function renderProfile() {
                   Bio
                   <textarea name="bio" rows="3">${escapeHTML(currentUser.bio)}</textarea>
                 </label>
+                <div class="profile-media-editor">
+                  <label>
+                    Foto de perfil
+                    <input name="avatarFile" type="file" accept="image/*,.gif" data-profile-avatar />
+                  </label>
+                  ${renderProfileMediaPreview(state.profileAvatarDraft, "sem foto", "data-remove-profile-avatar")}
+                </div>
+                <div class="profile-media-editor">
+                  <label>
+                    GIF do perfil
+                    <input name="profileGifFile" type="file" accept="image/gif,.gif" data-profile-gif />
+                  </label>
+                  ${renderProfileMediaPreview(state.profileGifDraft, "sem GIF", "data-remove-profile-gif")}
+                </div>
                 <div class="form-actions">
                   <button class="primary-button" type="submit">Salvar perfil</button>
                   <button class="secondary-button" type="button" data-cancel-edit>Cancelar</button>
@@ -1037,22 +1461,15 @@ function renderProfile() {
                 <h1>${escapeHTML(currentUser.name)}</h1>
                 <span>@${escapeHTML(currentUser.handle)}</span>
                 <p>${escapeHTML(currentUser.bio)}</p>
+                ${renderProfileGif(currentUser.profileGif)}
                 <button class="secondary-button" type="button" data-edit-profile>Editar perfil</button>
               </div>
             `
         }
       </div>
-      ${renderProfileStats(userPosts)}
-      <section class="timeline-column profile-posts">
-        <div class="section-title-row">
-          <div>
-            <p class="eyebrow">posts do usuario</p>
-            <h2>${userPosts.length} publicacoes</h2>
-          </div>
-          <button class="small-button" type="button" data-open-compose>Novo post</button>
-        </div>
-        ${renderPostList(userPosts)}
-      </section>
+      ${renderProfileStats(userPosts, userComments, savedPosts)}
+      ${renderProfileTabs({ userPosts, userComments, savedPosts, likedPosts })}
+      ${renderProfileTabPanel({ userPosts, userComments, savedPosts, likedPosts })}
     </section>
   `;
 }
@@ -1138,6 +1555,7 @@ app.addEventListener("click", (event) => {
   const actionButton = event.target.closest("[data-action]");
   const categoryButton = event.target.closest("[data-category]");
   const tagButton = event.target.closest("[data-search-tag]");
+  const profileTabButton = event.target.closest("[data-profile-tab]");
 
   if (actionButton) {
     togglePostAction(actionButton.dataset.action, actionButton.dataset.postId);
@@ -1165,6 +1583,12 @@ app.addEventListener("click", (event) => {
     return;
   }
 
+  if (profileTabButton) {
+    state.profileTab = profileTabButton.dataset.profileTab;
+    render();
+    return;
+  }
+
   if (tagButton) {
     state.query = tagButton.dataset.searchTag;
     searchInput.value = state.query;
@@ -1179,12 +1603,49 @@ app.addEventListener("click", (event) => {
 
   if (event.target.closest("[data-edit-profile]")) {
     state.editingProfile = true;
+    state.profileAvatarDraft = currentUser.avatarMedia || null;
+    state.profileGifDraft = currentUser.profileGif || null;
     render();
   }
 
   if (event.target.closest("[data-cancel-edit]")) {
     state.editingProfile = false;
+    state.profileAvatarDraft = null;
+    state.profileGifDraft = null;
     render();
+  }
+
+  if (event.target.closest("[data-remove-profile-avatar]")) {
+    state.profileAvatarDraft = null;
+    render();
+  }
+
+  if (event.target.closest("[data-remove-profile-gif]")) {
+    state.profileGifDraft = null;
+    render();
+  }
+});
+
+app.addEventListener("change", (event) => {
+  const avatarInput = event.target.closest("[data-profile-avatar]");
+  const gifInput = event.target.closest("[data-profile-gif]");
+
+  if (avatarInput) {
+    const file = avatarInput.files?.[0];
+    readProfileMediaFile(file, (media) => {
+      state.profileAvatarDraft = { ...media, type: media.isGif ? "avatar-gif" : "avatar-image" };
+      render();
+    });
+  }
+
+  if (gifInput) {
+    const file = gifInput.files?.[0];
+    if (!isGifFile(file)) return;
+
+    readProfileMediaFile(file, (media) => {
+      state.profileGifDraft = { ...media, type: "profile-gif" };
+      render();
+    });
   }
 });
 
@@ -1222,6 +1683,7 @@ app.addEventListener("submit", (event) => {
   if (profileForm) {
     event.preventDefault();
     const data = new FormData(profileForm);
+    const previousHandle = currentUser.handle;
     const name = String(data.get("name") || currentUser.name).trim();
     const handle = cleanHandle(data.get("handle") || currentUser.handle);
 
@@ -1231,8 +1693,13 @@ app.addEventListener("submit", (event) => {
       handle,
       bio: String(data.get("bio") || "").trim(),
       initials: getInitials(name),
+      avatarMedia: state.profileAvatarDraft,
+      profileGif: state.profileGifDraft,
     };
+    syncUserSnapshots(previousHandle, currentUser);
     state.editingProfile = false;
+    state.profileAvatarDraft = null;
+    state.profileGifDraft = null;
     updateHeader();
     render();
   }
@@ -1319,6 +1786,16 @@ document.addEventListener("click", (event) => {
   if (event.target.closest("[data-close-modal]")) closeModals();
 });
 
+document.addEventListener(
+  "error",
+  (event) => {
+    if (!(event.target instanceof HTMLImageElement)) return;
+    const media = event.target.closest(".post-media");
+    if (media) media.remove();
+  },
+  true
+);
+
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     closeModals();
@@ -1338,6 +1815,8 @@ loginForm.addEventListener("submit", (event) => {
     bio: String(data.get("bio") || "").trim(),
     initials: getInitials(name),
     avatarBg: "#5fbf3b",
+    avatarMedia: null,
+    profileGif: null,
   };
 
   closeModals();
