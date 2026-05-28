@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title">
+  <title id="title">Patch cat avatar</title>
+  <rect width="160" height="160" fill="#dfe9c4"/>
+  <path d="M38 58 54 28l18 26h16l18-26 16 30v54c0 21-18 34-42 34S38 133 38 112z" fill="#5fbf3b" stroke="#2b1716" stroke-width="7"/>
+  <circle cx="62" cy="86" r="8" fill="#2b1716"/>
+  <circle cx="98" cy="86" r="8" fill="#2b1716"/>
+  <path d="M80 94v10m-17 8c10 9 24 9 34 0" fill="none" stroke="#2b1716" stroke-width="6" stroke-linecap="round"/>
+  <rect x="30" y="120" width="100" height="15" rx="7" fill="#fff8e8" stroke="#2b1716" stroke-width="5"/>
+</svg>

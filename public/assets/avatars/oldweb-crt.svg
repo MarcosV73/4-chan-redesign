@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title">
+  <title id="title">Happy CRT avatar</title>
+  <rect width="160" height="160" fill="#2d1718"/>
+  <rect x="24" y="34" width="112" height="86" rx="16" fill="#fff8e8" stroke="#8b664a" stroke-width="7"/>
+  <rect x="40" y="50" width="80" height="50" rx="8" fill="#405f91"/>
+  <path d="M58 70h10m24 0h10M62 86c12 10 24 10 36 0" stroke="#fff8e8" stroke-width="6" stroke-linecap="round"/>
+  <path d="M62 120h36l10 18H52z" fill="#c9953d" stroke="#8b664a" stroke-width="5"/>
+  <path d="M32 26h96" stroke="#78a957" stroke-width="8" stroke-linecap="round"/>
+</svg>

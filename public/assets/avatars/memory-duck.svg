@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title">
+  <title id="title">Memory duck avatar</title>
+  <rect width="160" height="160" fill="#2b1c18"/>
+  <circle cx="80" cy="82" r="48" fill="#c9953d" stroke="#fff8e8" stroke-width="7"/>
+  <path d="M100 84h34l-28 18z" fill="#a36f2f" stroke="#fff8e8" stroke-width="5" stroke-linejoin="round"/>
+  <circle cx="62" cy="73" r="8" fill="#2b1716"/>
+  <path d="M48 116c20 14 45 14 64 0" fill="none" stroke="#2b1716" stroke-width="7" stroke-linecap="round"/>
+  <rect x="48" y="22" width="64" height="22" rx="7" fill="#405f91" stroke="#fff8e8" stroke-width="5"/>
+</svg>

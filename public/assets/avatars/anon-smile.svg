@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title">
+  <title id="title">Anonymous smile avatar</title>
+  <rect width="160" height="160" fill="#201614"/>
+  <path d="M20 28h120v104H20z" fill="#fff8e8" stroke="#8b664a" stroke-width="8"/>
+  <path d="M40 44h80v16H40z" fill="#7a2933"/>
+  <circle cx="62" cy="88" r="11" fill="#2b1716"/>
+  <circle cx="98" cy="88" r="11" fill="#2b1716"/>
+  <path d="M54 112c18 16 34 16 52 0" fill="none" stroke="#4d8a32" stroke-width="9" stroke-linecap="round"/>
+  <path d="M20 132h120v10H20z" fill="#c9953d"/>
+</svg>

@@ -112,12 +112,25 @@ const categoryLabels = {
   vida: "vida",
 };
 
+const profileAvatars = {
+  anon: { url: "/assets/avatars/anon-smile.svg", label: "anon-smile.svg" },
+  patchKid: { url: "/assets/avatars/patch-cat.svg", label: "patch-cat.svg" },
+  oldWeb: { url: "/assets/avatars/oldweb-crt.svg", label: "oldweb-crt.svg" },
+  nullUser: { url: "/assets/avatars/null-blob.svg", label: "null-blob.svg" },
+  memoryCard: { url: "/assets/avatars/memory-duck.svg", label: "memory-duck.svg" },
+  bossKey: { url: "/assets/avatars/boss-key.svg", label: "boss-key.svg" },
+  inkCrash: { url: "/assets/avatars/ink-bunny.svg", label: "ink-bunny.svg" },
+  cassetteGhost: { url: "/assets/avatars/cassette-toast.svg", label: "cassette-toast.svg" },
+  afterSchool: { url: "/assets/avatars/after-school-star.svg", label: "after-school-star.svg" },
+};
+
 const anonymousUser = {
   name: "Anonymous",
   handle: "anon",
   bio: "sem perfil, so o post.",
   initials: "AN",
   avatarBg: "#121018",
+  avatarMedia: profileAvatars.anon,
 };
 
 let currentUser = null;
@@ -132,6 +145,7 @@ let posts = [
       handle: "patchkid",
       initials: "PK",
       avatarBg: "#5fbf3b",
+      avatarMedia: profileAvatars.patchKid,
     },
     time: "12 min",
     text: "Qual foi o ultimo software que realmente te deu vontade de abrir todo dia? Estou cansado de apps que parecem sala de reuniao.",
@@ -143,13 +157,13 @@ let posts = [
     commentsList: [
       {
         id: "c1",
-        author: { name: "Old Web", handle: "oldweb", initials: "OW", avatarBg: "#7c5cff" },
+        author: { name: "Old Web", handle: "oldweb", initials: "OW", avatarBg: "#7c5cff", avatarMedia: profileAvatars.oldWeb },
         time: "8 min",
         text: "Um leitor RSS simples. Zero algoritmo, so feed.",
       },
       {
         id: "c2",
-        author: { name: "Null User", handle: "nulluser", initials: "NU", avatarBg: "#8d3f4d" },
+        author: { name: "Null User", handle: "nulluser", initials: "NU", avatarBg: "#8d3f4d", avatarMedia: profileAvatars.nullUser },
         time: "4 min",
         text: "Winamp ainda faz mais sentido visual que metade dos players atuais.",
       },
@@ -164,6 +178,7 @@ let posts = [
       handle: "savepoint",
       initials: "MC",
       avatarBg: "#a36f2f",
+      avatarMedia: profileAvatars.memoryCard,
     },
     time: "28 min",
     text: "Thread de jogos que parecem melhores na sua memoria. Poste um titulo e uma defesa honesta.",
@@ -175,7 +190,7 @@ let posts = [
     commentsList: [
       {
         id: "c3",
-        author: { name: "Boss Key", handle: "bosskey", initials: "BK", avatarBg: "#2e86de" },
+        author: { name: "Boss Key", handle: "bosskey", initials: "BK", avatarBg: "#2e86de", avatarMedia: profileAvatars.bossKey },
         time: "21 min",
         text: "Tudo fica melhor quando a trilha sonora entra primeiro na lembranca.",
       },
@@ -190,6 +205,7 @@ let posts = [
       handle: "inkcrash",
       initials: "IC",
       avatarBg: "#8f4d70",
+      avatarMedia: profileAvatars.inkCrash,
     },
     time: "43 min",
     text: "Poste a arte que voce quase apagou. Critica rapida, sem palestra, com uma dica util no final.",
@@ -209,6 +225,7 @@ let posts = [
       handle: "tapeghost",
       initials: "CG",
       avatarBg: "#7c5cff",
+      avatarMedia: profileAvatars.cassetteGhost,
     },
     time: "1 h",
     text: "Albuns para andar por um shopping vazio as 23h. Quero capa feia, sintetizador triste e baixo comprimido.",
@@ -228,6 +245,7 @@ let posts = [
       handle: "afterschool",
       initials: "AS",
       avatarBg: "#8d3f4d",
+      avatarMedia: profileAvatars.afterSchool,
     },
     time: "2 h",
     text: "A internet era melhor quando cada pagina parecia feita por alguem com uma ideia ruim e muita vontade.",
@@ -1354,6 +1372,7 @@ function renderBoards() {
     <section class="community-grid">
       ${list.map((board) => renderBoardCard(board)).join("") || renderPostList([])}
     </section>
+    ${renderHomePulse()}
   `;
 }
 

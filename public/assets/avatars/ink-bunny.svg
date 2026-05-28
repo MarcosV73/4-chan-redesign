@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title">
+  <title id="title">Ink bunny avatar</title>
+  <rect width="160" height="160" fill="#f0dfbf"/>
+  <path d="M52 62C44 32 48 18 60 18c11 0 18 18 20 43 3-25 12-43 24-40 13 3 13 21 2 45" fill="#8f4d70" stroke="#2b1716" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="80" cy="91" r="45" fill="#fff8e8" stroke="#2b1716" stroke-width="7"/>
+  <circle cx="63" cy="88" r="7" fill="#2b1716"/>
+  <circle cx="98" cy="88" r="7" fill="#2b1716"/>
+  <path d="M80 98v10m-14 7c9 7 19 7 28 0" fill="none" stroke="#8f4d70" stroke-width="6" stroke-linecap="round"/>
+  <path d="M26 128h108" stroke="#8f4d70" stroke-width="9" stroke-linecap="round"/>
+</svg>

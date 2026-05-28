@@ -30,22 +30,22 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #201614;
-  --bg-deep: #2b1c18;
-  --paper: #2a1f1b;
-  --paper-strong: #35261e;
-  --thread: #33251f;
-  --thread-soft: #2e221d;
+  --bg: #211714;
+  --bg-deep: #302018;
+  --paper: #34241f;
+  --paper-strong: #433027;
+  --thread: #422e25;
+  --thread-soft: #382720;
   --ink: #f7ead1;
-  --muted: #c8b69a;
-  --soft: #a99276;
-  --line: #6b4c38;
-  --line-strong: #9c7858;
+  --muted: #ddc9aa;
+  --soft: #c4aa87;
+  --line: #8a6349;
+  --line-strong: #b08461;
   --header: #140d0d;
   --header-soft: #211414;
   --green: #78a957;
   --green-soft: #34472a;
-  --wine: #d18893;
+  --wine: #e09aa4;
   --blue: #91a9d4;
   --purple: #a998c8;
   --rose: #cf86a1;
@@ -247,7 +247,7 @@ a {
   border-radius: 999px;
   color: #eee0c3;
   font-family: var(--mono);
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 800;
   transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
 }
@@ -279,12 +279,13 @@ a {
   align-items: center;
   width: min(320px, 28vw);
 }
-/* Remove outline on focus within the search container */
+
 .search-shell:focus-within {
-  outline: none;
+  outline: none !important;
 }
+
 .search-shell input:focus-visible {
-  outline: none;
+  outline: none !important;
 }
 
 .search-shell span {
@@ -318,6 +319,14 @@ a {
   background: rgba(255, 248, 232, 0.08);
   color: #fff8e8;
   transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.search-shell input:focus,
+.search-shell input:focus-visible {
+  border-color: rgba(255, 248, 232, 0.5);
+  background: rgba(255, 248, 232, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(255, 248, 232, 0.12);
+  outline: none !important;
 }
 
 .search-shell input::placeholder {
@@ -360,10 +369,9 @@ img {
 
 a:focus-visible,
 button:focus-visible,
-input:focus-visible,
+input:not(#globalSearch):focus-visible,
 .select:focus-visible,
-.community-card:focus-visible,
-.search-shell input:focus-visible {
+.community-card:focus-visible {
 
   outline: 2px solid var(--green);
 }
@@ -441,7 +449,7 @@ input:focus-visible,
 #authButton,
 #themeToggle {
   transform-origin: center;
-  will-change: transform;
+  will-change: box-shadow;
 }
 
 #newPostButton:hover,
@@ -450,14 +458,15 @@ input:focus-visible,
 #authButton:active,
 #themeToggle:hover,
 #themeToggle:active {
-  transform: translateY(-1px) scale(1.02);
+  transform: none;
 }
 
 .header-button:hover,
 .profile-button:hover,
 .header-button:active,
 .profile-button:active {
-  box-shadow: 0 0 0 1px rgba(255, 248, 232, 0.14);
+  border-color: rgba(255, 248, 232, 0.56);
+  box-shadow: 0 0 0 1px rgba(255, 248, 232, 0.12), 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
 .mini-avatar {
@@ -470,7 +479,7 @@ input:focus-visible,
   border-radius: 50%;
   background: var(--avatar-bg);
   color: #ffffff;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
 }
 
 .mini-avatar img,
@@ -483,7 +492,7 @@ input:focus-visible,
 
 .app-view {
   width: min(1160px, calc(100% - 36px));
-  min-height: 64vh;
+  min-height: 56vh;
   margin: 0 auto;
   padding: 22px 0 48px;
 }
@@ -514,7 +523,7 @@ input:focus-visible,
   margin: 0;
   color: var(--wine);
   font-family: var(--mono);
-  font-size: 0.76rem;
+  font-size: 0.8rem;
   font-weight: 900;
   text-transform: uppercase;
 }
@@ -620,7 +629,7 @@ input:focus-visible,
   background: rgba(45, 23, 24, 0.78);
   color: #fff8e8;
   font-family: var(--mono);
-  font-size: 0.74rem;
+  font-size: 0.8rem;
   font-weight: 900;
 }
 
@@ -951,7 +960,7 @@ input:focus-visible,
 .profile-activity-panel .mini-thread-list button span {
   color: var(--wine);
   font-family: var(--mono);
-  font-size: 0.74rem;
+  font-size: 0.8rem;
   font-style: normal;
   font-weight: 900;
 }
@@ -973,7 +982,7 @@ input:focus-visible,
 .profile-activity-panel .mini-thread-list button em {
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   font-style: normal;
   font-weight: 800;
 }
@@ -999,7 +1008,7 @@ input:focus-visible,
   position: relative;
   display: grid;
   gap: 12px;
-  min-height: 218px;
+  min-height: 196px;
   padding: 17px;
   overflow: hidden;
   transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
@@ -1062,7 +1071,7 @@ input:focus-visible,
   background: var(--paper-strong);
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   font-weight: 800;
 }
 
@@ -1092,7 +1101,7 @@ input:focus-visible,
   background: var(--paper-strong);
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 0.74rem;
+  font-size: 0.8rem;
   font-weight: 800;
 }
 
@@ -1105,7 +1114,7 @@ input:focus-visible,
 .community-footer span {
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 0.76rem;
+  font-size: 0.8rem;
 }
 
 .community-footer strong {
@@ -1124,7 +1133,7 @@ input:focus-visible,
 .page-header,
 .board-hero,
 .profile-empty {
-  padding: 24px;
+  padding: 20px;
   border-top: 4px solid var(--wine);
 }
 
@@ -1156,6 +1165,52 @@ input:focus-visible,
 
 .filter-chip:hover,
 .filter-chip.is-active {
+  background: var(--green);
+  color: #fff8e8;
+}
+
+:root[data-theme="dark"] .quick-composer,
+:root[data-theme="dark"] .community-card,
+:root[data-theme="dark"] .post-card,
+:root[data-theme="dark"] .rail-card,
+:root[data-theme="dark"] .page-header,
+:root[data-theme="dark"] .board-hero,
+:root[data-theme="dark"] .profile-empty,
+:root[data-theme="dark"] .pulse-card,
+:root[data-theme="dark"] .comments-panel,
+:root[data-theme="dark"] .profile-info,
+:root[data-theme="dark"] .profile-edit-form,
+:root[data-theme="dark"] .modal,
+:root[data-theme="dark"] .empty-state {
+  border-color: var(--line);
+  background: var(--paper);
+}
+
+:root[data-theme="dark"] .tag-row span,
+:root[data-theme="dark"] .category-badge,
+:root[data-theme="dark"] .filter-chip,
+:root[data-theme="dark"] .board-facts span,
+:root[data-theme="dark"] .profile-tabs button {
+  border-color: var(--line-strong);
+  background: color-mix(in srgb, var(--paper-strong) 88%, #fff8e8 4%);
+  color: var(--muted);
+}
+
+:root[data-theme="dark"] .comment-form input,
+:root[data-theme="dark"] .stack-form input,
+:root[data-theme="dark"] .stack-form textarea,
+:root[data-theme="dark"] .stack-form select,
+:root[data-theme="dark"] .profile-edit-form input,
+:root[data-theme="dark"] .profile-edit-form textarea,
+:root[data-theme="dark"] .profile-media-editor input[type="file"] {
+  border-color: var(--line-strong);
+  background: #2b1e19;
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .filter-chip:hover,
+:root[data-theme="dark"] .filter-chip.is-active {
+  border-color: color-mix(in srgb, var(--green) 70%, var(--line-strong));
   background: var(--green);
   color: #fff8e8;
 }
@@ -1195,7 +1250,7 @@ input:focus-visible,
 .avatar.is-small {
   width: 38px;
   height: 38px;
-  font-size: 0.76rem;
+  font-size: 0.8rem;
 }
 
 .avatar.is-profile {
@@ -1226,7 +1281,7 @@ input:focus-visible,
 .post-header span {
   color: var(--soft);
   font-family: var(--mono);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 800;
 }
 
@@ -1253,7 +1308,7 @@ input:focus-visible,
 .post-media {
   position: relative;
   display: grid;
-  min-height: 200px;
+  min-height: 172px;
   margin: 14px 0 0;
   place-items: end start;
   overflow: hidden;
@@ -1287,14 +1342,14 @@ input:focus-visible,
 .post-media img {
   display: block;
   width: 100%;
-  height: clamp(190px, 32vw, 320px);
+  height: clamp(176px, 30vw, 292px);
   max-height: none;
   object-fit: cover;
   filter: saturate(0.92) contrast(1.05);
 }
 
 .post-card.is-full .post-media img {
-  height: clamp(240px, 44vw, 440px);
+  height: clamp(220px, 40vw, 400px);
 }
 
 .post-media.is-contextual img {
@@ -1311,7 +1366,7 @@ input:focus-visible,
   background: var(--paper);
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 900;
 }
 
@@ -1382,7 +1437,7 @@ input:focus-visible,
   background: #2d1718;
   color: #fff8e8;
   font-family: var(--mono);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-weight: 900;
 }
 
@@ -1477,7 +1532,7 @@ input:focus-visible,
 .rail-board-list span {
   color: color-mix(in srgb, var(--accent) 72%, var(--blue));
   font-family: var(--mono);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
 }
 
 .board-hero {
@@ -1610,7 +1665,7 @@ input:focus-visible,
 .comment-card span {
   color: var(--soft);
   font-family: var(--mono);
-  font-size: 0.76rem;
+  font-size: 0.8rem;
   font-weight: 800;
 }
 
@@ -1632,7 +1687,7 @@ input:focus-visible,
 }
 
 .profile-cover {
-  min-height: 126px;
+  min-height: 112px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background:
@@ -1723,7 +1778,7 @@ input:focus-visible,
 .profile-media-preview span {
   color: var(--soft);
   font-family: var(--mono);
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 900;
 }
 
@@ -1749,7 +1804,7 @@ input:focus-visible,
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   font-weight: 900;
 }
 
@@ -1781,7 +1836,7 @@ input:focus-visible,
 .profile-activity-panel span {
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   font-weight: 900;
   text-transform: uppercase;
 }
@@ -1871,7 +1926,7 @@ input:focus-visible,
   background: color-mix(in srgb, var(--paper-strong) 72%, transparent);
   color: inherit;
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   text-align: center;
 }
 
@@ -1903,7 +1958,7 @@ input:focus-visible,
 .profile-comment-meta span {
   color: var(--soft);
   font-family: var(--mono);
-  font-size: 0.74rem;
+  font-size: 0.8rem;
   font-weight: 900;
 }
 
@@ -2011,7 +2066,7 @@ input:focus-visible,
   background: var(--paper);
   color: var(--ink);
   font-family: var(--mono);
-  font-size: 0.76rem;
+  font-size: 0.8rem;
   font-weight: 900;
 }
 
@@ -2159,7 +2214,7 @@ input:focus-visible,
   padding: 28px 0 36px;
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
 }
 
 .site-footer nav {
@@ -2187,10 +2242,9 @@ input:focus-visible,
   color: var(--ink);
 }
 
-:focus-visible,
 button:focus-visible,
 a:focus-visible,
-input:focus-visible,
+input:not(#globalSearch):focus-visible,
 textarea:focus-visible,
 select:focus-visible,
 [data-board-card]:focus-visible,
@@ -2210,8 +2264,9 @@ select:focus-visible,
 
 .search-shell input:focus,
 .search-shell input:focus-visible {
-  border-color: rgba(255, 248, 232, 0.24);
-  box-shadow: none;
+  border-color: rgba(255, 248, 232, 0.5);
+  background: rgba(255, 248, 232, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(255, 248, 232, 0.12);
   outline: none !important;
 }
 
