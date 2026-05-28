@@ -3,7 +3,7 @@ import "./styles.css";
 const boards = [
   {
     code: "b",
-    title: "Random",
+    title: "Aleatorio",
     category: "underground",
     icon: "B",
     accent: "#8d3f4d",
@@ -14,7 +14,7 @@ const boards = [
   },
   {
     code: "g",
-    title: "Technology",
+    title: "Tecnologia",
     category: "tech",
     icon: "G",
     accent: "#4f7d35",
@@ -25,7 +25,7 @@ const boards = [
   },
   {
     code: "v",
-    title: "Video Games",
+    title: "Jogos",
     category: "games",
     icon: "V",
     accent: "#a36f2f",
@@ -36,7 +36,7 @@ const boards = [
   },
   {
     code: "mu",
-    title: "Music",
+    title: "Musica",
     category: "cultura",
     icon: "M",
     accent: "#6f5b8d",
@@ -47,7 +47,7 @@ const boards = [
   },
   {
     code: "ic",
-    title: "Artwork/Critique",
+    title: "Arte/Critica",
     category: "criacao",
     icon: "I",
     accent: "#8f4d70",
@@ -58,7 +58,7 @@ const boards = [
   },
   {
     code: "diy",
-    title: "Do It Yourself",
+    title: "Faca Voce Mesmo",
     category: "criacao",
     icon: "D",
     accent: "#5d7f40",
@@ -80,7 +80,7 @@ const boards = [
   },
   {
     code: "fit",
-    title: "Fitness",
+    title: "Condicionamento",
     category: "vida",
     icon: "F",
     accent: "#9a5a38",
@@ -91,7 +91,7 @@ const boards = [
   },
   {
     code: "lit",
-    title: "Literature",
+    title: "Literatura",
     category: "cultura",
     icon: "L",
     accent: "#607880",
@@ -278,6 +278,16 @@ const normalize = (value) =>
     .toLowerCase()
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, "");
+
+function matchesSearchQuery(parts, query = state.query) {
+  const normalizedQuery = normalize(query).trim();
+  if (!normalizedQuery) return true;
+
+  const haystack = normalize(parts.filter(Boolean).join(" "));
+  if (haystack.includes(normalizedQuery)) return true;
+
+  return normalizedQuery.split(/\s+/).every((token) => haystack.includes(token));
+}
 
 const postImageThemeKeywords = {
   tech: ["software", "app", "apps", "linux", "hardware", "codigo", "code", "internet", "computador", "script", "setup", "rss"],
@@ -483,6 +493,11 @@ function setHash(hash) {
   location.hash = hash;
 }
 
+function openSearchResults() {
+  if (getRoute().view === "search") render();
+  else setHash("search");
+}
+
 function renderComposerPreview() {
   if (!state.composeAttachment) {
     composePreview.hidden = true;
@@ -590,37 +605,82 @@ function updateHeader() {
 }
 
 function filteredBoards() {
-  const query = normalize(state.query);
-
   return boards.filter((board) => {
     const categoryMatch = state.category === "all" || board.category === state.category;
-    const haystack = normalize(
-      [board.code, board.title, board.category, board.desc, ...board.tags].join(" ")
-    );
-    return categoryMatch && (!query || haystack.includes(query));
+    const searchableParts = [
+      board.code,
+      `/${board.code}/`,
+      board.title,
+      board.category,
+      board.desc,
+      ...board.tags,
+      ...board.tags.map((tag) => `#${tag}`),
+    ];
+    return categoryMatch && matchesSearchQuery(searchableParts);
   });
 }
 
 function filteredPosts({ boardCode, handle } = {}) {
-  const query = normalize(state.query);
-
   return posts.filter((post) => {
     const board = boardByCode(post.boardCode);
     const boardMatch = !boardCode || post.boardCode === boardCode;
     const userMatch = !handle || post.author.handle === handle;
-    const haystack = normalize(
-      [
-        post.subject,
-        post.text,
-        post.author.name,
-        post.author.handle,
-        board.code,
-        board.title,
-        ...board.tags,
-      ].join(" ")
-    );
-    return boardMatch && userMatch && (!query || haystack.includes(query));
+    const searchableParts = [
+      post.subject,
+      post.text,
+      post.author.name,
+      post.author.handle,
+      board.code,
+      `/${board.code}/`,
+      board.title,
+      board.category,
+      board.desc,
+      ...board.tags,
+      ...board.tags.map((tag) => `#${tag}`),
+    ];
+    return boardMatch && userMatch && matchesSearchQuery(searchableParts);
   });
+}
+
+function getSearchResults() {
+  const query = normalize(state.query).trim();
+
+  if (!query) {
+    return { boards: [], posts: [] };
+  }
+
+  const matchedBoards = boards.filter((board) => {
+    return matchesSearchQuery([
+      board.code,
+      `/${board.code}/`,
+      board.title,
+      board.category,
+      board.desc,
+      ...board.tags,
+      ...board.tags.map((tag) => `#${tag}`),
+    ]);
+  });
+
+  const matchedPosts = posts.filter((post) => {
+    const board = boardByCode(post.boardCode);
+    const commentsText = (post.commentsList || []).map((comment) => comment.text).join(" ");
+    return matchesSearchQuery([
+      post.subject,
+      post.text,
+      post.author.name,
+      post.author.handle,
+      board.code,
+      `/${board.code}/`,
+      board.title,
+      board.category,
+      board.desc,
+      ...board.tags,
+      ...board.tags.map((tag) => `#${tag}`),
+      commentsText,
+    ]);
+  });
+
+  return { boards: matchedBoards, posts: matchedPosts };
 }
 
 function renderCategoryFilters() {
@@ -1232,6 +1292,55 @@ function renderFeed() {
   `;
 }
 
+function renderSearchResults() {
+  const query = state.query.trim();
+  const results = getSearchResults();
+  const total = results.boards.length + results.posts.length;
+
+  app.innerHTML = `
+    <section class="page-header search-results-header">
+      <p class="eyebrow">busca global</p>
+      <h1>${query ? `Resultados para "${escapeHTML(query)}"` : "Digite algo na busca"}</h1>
+      <p>
+        ${
+          query
+            ? `${total} resultado${total === 1 ? "" : "s"} encontrado${total === 1 ? "" : "s"} em boards, posts e comentarios.`
+            : "Use a barra do topo para encontrar boards, posts, tags, usuarios e comentarios."
+        }
+      </p>
+    </section>
+    ${
+      query
+        ? `
+          <section class="search-results-layout">
+            <div class="timeline-column">
+              <div class="section-title-row">
+                <div>
+                  <p class="eyebrow">posts encontrados</p>
+                  <h2>${results.posts.length} posts</h2>
+                </div>
+              </div>
+              ${renderPostList(results.posts)}
+            </div>
+            <aside class="right-rail">
+              <section class="rail-card">
+                <p class="eyebrow">boards encontrados</p>
+                <div class="search-board-results">
+                  ${
+                    results.boards.length
+                      ? results.boards.map((board) => renderBoardCard(board, true)).join("")
+                      : `<p class="muted-copy">Nenhum board combina com essa busca.</p>`
+                  }
+                </div>
+              </section>
+            </aside>
+          </section>
+        `
+        : ""
+    }
+  `;
+}
+
 function renderBoards() {
   const list = filteredBoards();
 
@@ -1484,6 +1593,7 @@ function render() {
   else if (view === "post") renderPostDetail(id);
   else if (view === "profile") renderProfile();
   else if (view === "feed") renderFeed();
+  else if (view === "search") renderSearchResults();
   else renderHome();
 
   const activeEl = document.activeElement;
@@ -1592,7 +1702,7 @@ app.addEventListener("click", (event) => {
   if (tagButton) {
     state.query = tagButton.dataset.searchTag;
     searchInput.value = state.query;
-    render();
+    openSearchResults();
     return;
   }
 
@@ -1709,7 +1819,24 @@ primaryNav.addEventListener("click", closeMobileMenu);
 
 searchInput.addEventListener("input", () => {
   state.query = searchInput.value.trim();
+  const route = getRoute();
+
+  if (state.query && route.view !== "search") {
+    openSearchResults();
+    return;
+  }
+
   render();
+});
+
+searchInput.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter") return;
+  event.preventDefault();
+  state.query = searchInput.value.trim();
+
+  if (state.query) {
+    openSearchResults();
+  }
 });
 
 authButton.addEventListener("click", () => {

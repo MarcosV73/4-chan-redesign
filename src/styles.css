@@ -1428,6 +1428,22 @@ input:focus-visible,
   gap: 14px;
 }
 
+.search-results-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.42fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.search-board-results {
+  display: grid;
+  gap: 10px;
+}
+
+.search-board-results .community-card {
+  min-height: 0;
+}
+
 .rail-card {
   display: grid;
   gap: 12px;
@@ -2222,7 +2238,8 @@ select:focus-visible,
 
   .hero-section,
   .content-layout,
-  .board-hero {
+  .board-hero,
+  .search-results-layout {
     grid-template-columns: 1fr;
   }
 
