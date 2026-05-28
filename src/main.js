@@ -255,6 +255,8 @@ const searchInput = document.querySelector("#globalSearch");
 const authButton = document.querySelector("#authButton");
 const newPostButton = document.querySelector("#newPostButton");
 const themeToggle = document.querySelector("#themeToggle");
+const themeToggleMobile = document.querySelector("#themeToggleMobile");
+const mobileMenuToggle = document.querySelector("#mobileMenuToggle");
 const loadingScreen = document.querySelector("#loadingScreen");
 const modalBackdrop = document.querySelector("#modalBackdrop");
 const loginModal = document.querySelector("#loginModal");
@@ -311,7 +313,14 @@ function cleanHandle(value) {
 }
 
 function closeMobileMenu() {
-  primaryNav.classList.remove("is-open");
+  const header = document.querySelector(".site-header");
+  if (header) {
+    header.classList.remove("menu-open");
+  }
+  if (mobileMenuToggle) {
+    mobileMenuToggle.classList.remove("is-open");
+    mobileMenuToggle.setAttribute("aria-expanded", "false");
+  }
 }
 
 function setHash(hash) {
@@ -547,14 +556,18 @@ function renderAvatar(user, extraClass = "") {
 }
 
 function renderActionButton(post, action, label, count, active) {
+  const icons = { like: "♡", comment: "💬", repost: "↗", save: "⚑" };
+  const activeIcons = { like: "♥" };
+  const icon = (active && activeIcons[action]) || icons[action] || label;
   return `
     <button
       class="action-button ${active ? "is-active" : ""}"
       type="button"
       data-action="${action}"
       data-post-id="${post.id}"
+      aria-label="${label} ${count}"
     >
-      <span>${label}</span>
+      <span class="action-icon" aria-hidden="true">${icon}</span>
       <b>${count}</b>
     </button>
   `;
@@ -589,7 +602,7 @@ function renderPostCard(post, options = {}) {
         ${
           options.full
             ? ""
-            : `<button class="thread-link" type="button" data-post="${post.id}">Ver conversa</button>`
+            : `<button class="thread-link" type="button" data-post="${post.id}">Ler comentários</button>`
         }
       </div>
     </article>
@@ -607,6 +620,71 @@ function renderPostList(list) {
   }
 
   return `<div class="feed-list">${list.map((post) => renderPostCard(post)).join("")}</div>`;
+}
+
+function getPostScore(post) {
+  return post.stats.likes + post.stats.comments * 3 + post.stats.reposts * 2 + post.stats.saves;
+}
+
+function renderMiniThreadButton(post) {
+  const board = boardByCode(post.boardCode);
+
+  return `
+    <button class="mini-thread-button" type="button" data-post="${post.id}">
+      <span>/${escapeHTML(board.code)}/ · ${escapeHTML(post.time)}</span>
+      <strong>${escapeHTML(post.subject || "Thread")}</strong>
+      <em>${post.stats.comments} respostas</em>
+    </button>
+  `;
+}
+
+function renderHomePulse() {
+  const activeBoards = ["b", "v", "g"].map(boardByCode);
+  const recentThreads = posts.slice(0, 3);
+  const hotThreads = [...posts].sort((a, b) => getPostScore(b) - getPostScore(a)).slice(0, 3);
+
+  return `
+    <section class="home-pulse-grid" aria-label="Atividade da comunidade">
+      <article class="pulse-card">
+        <p class="eyebrow">atividade recente</p>
+        <div class="activity-list">
+          ${recentThreads
+            .map(
+              (post) => `
+                <button type="button" data-post="${post.id}">
+                  <span>${escapeHTML(post.time)}</span>
+                  <strong>${escapeHTML(post.author.name)}</strong>
+                  <em>/${escapeHTML(post.boardCode)}/</em>
+                </button>
+              `
+            )
+            .join("")}
+        </div>
+      </article>
+      <article class="pulse-card">
+        <p class="eyebrow">boards em alta</p>
+        <div class="compact-board-list">
+          ${activeBoards
+            .map(
+              (board) => `
+                <button type="button" data-board="${board.code}" style="--accent:${board.accent}">
+                  <span>/${escapeHTML(board.code)}/</span>
+                  <strong>${escapeHTML(board.title)}</strong>
+                  <em>${escapeHTML(board.posts)} posts</em>
+                </button>
+              `
+            )
+            .join("")}
+        </div>
+      </article>
+      <article class="pulse-card">
+        <p class="eyebrow">threads populares</p>
+        <div class="mini-thread-list">
+          ${hotThreads.map((post) => renderMiniThreadButton(post)).join("")}
+        </div>
+      </article>
+    </section>
+  `;
 }
 
 function renderRightRail() {
@@ -665,6 +743,7 @@ function renderHome() {
         ${popular.map((board) => renderBoardCard(board, true)).join("")}
       </div>
     </section>
+    ${renderHomePulse()}
 
     <section class="content-layout">
       <div class="timeline-column">
@@ -682,6 +761,55 @@ function renderHome() {
         ${renderPostList(feed)}
       </div>
       ${renderRightRail()}
+    </section>
+  `;
+}
+
+function renderProfileStats(userPosts) {
+  const likes = userPosts.reduce((total, post) => total + post.stats.likes, 0);
+  const replies = userPosts.reduce((total, post) => total + post.commentsList.length, 0);
+  const savedThreads = posts.filter((post) => post.saved).length;
+  const boardCount = new Set(userPosts.map((post) => post.boardCode)).size;
+  const lastPosts = userPosts.slice(0, 2);
+
+  return `
+    <section class="profile-stats-grid" aria-label="Resumo do perfil">
+      <article>
+        <span>posts</span>
+        <strong>${userPosts.length}</strong>
+      </article>
+      <article>
+        <span>curtidas</span>
+        <strong>${likes}</strong>
+      </article>
+      <article>
+        <span>respostas</span>
+        <strong>${replies}</strong>
+      </article>
+      <article>
+        <span>boards</span>
+        <strong>${boardCount}</strong>
+      </article>
+    </section>
+    <section class="profile-activity-panel">
+      <div>
+        <p class="eyebrow">ultimas interacoes</p>
+        <strong>${savedThreads} threads salvas</strong>
+        <span>${userPosts.length ? "Voce ja deixou rastro no catalogo." : "Seu historico aparece aqui depois do primeiro post."}</span>
+      </div>
+      <div class="mini-thread-list">
+        ${
+          lastPosts.length
+            ? lastPosts.map((post) => renderMiniThreadButton(post)).join("")
+            : `
+              <button type="button" data-open-compose>
+                <span>novo</span>
+                <strong>Comece sua primeira thread</strong>
+                <em>qualquer board serve</em>
+              </button>
+            `
+        }
+      </div>
     </section>
   `;
 }
@@ -854,6 +982,20 @@ function renderProfile() {
         <p class="eyebrow">perfil local</p>
         <h1>Entre para criar sua identidade.</h1>
         <p>Escolha um apelido, um @ e uma bio curta para entrar na conversa.</p>
+        <div class="profile-preview-grid">
+          <article>
+            <span>avatar</span>
+            <strong>iniciais geradas</strong>
+          </article>
+          <article>
+            <span>posts</span>
+            <strong>salvos localmente</strong>
+          </article>
+          <article>
+            <span>perfil</span>
+            <strong>editavel</strong>
+          </article>
+        </div>
         <button class="primary-button" type="button" data-open-login>Entrar agora</button>
       </section>
     `;
@@ -900,6 +1042,7 @@ function renderProfile() {
             `
         }
       </div>
+      ${renderProfileStats(userPosts)}
       <section class="timeline-column profile-posts">
         <div class="section-title-row">
           <div>
@@ -926,7 +1069,12 @@ function render() {
   else if (view === "feed") renderFeed();
   else renderHome();
 
-  app.focus({ preventScroll: true });
+  const activeEl = document.activeElement;
+  const isInputActive = activeEl && (activeEl.tagName === "INPUT" || activeEl.tagName === "TEXTAREA" || activeEl.tagName === "SELECT");
+  const isHeaderActive = activeEl && activeEl.closest(".site-header");
+  if (!isInputActive && !isHeaderActive) {
+    app.focus({ preventScroll: true });
+  }
 }
 
 function togglePostAction(action, postId) {
@@ -1104,17 +1252,37 @@ authButton.addEventListener("click", () => {
 
 newPostButton.addEventListener("click", () => openCompose());
 
-themeToggle.addEventListener("click", () => {
+const handleThemeToggle = () => {
   const current = document.documentElement.dataset.theme || "light";
   const next = current === "dark" ? "light" : "dark";
 
   document.documentElement.dataset.theme = next;
   localStorage.setItem("neo-4chan-imageboard-theme", next);
-});
+};
+
+if (themeToggle) themeToggle.addEventListener("click", handleThemeToggle);
+if (themeToggleMobile) themeToggleMobile.addEventListener("click", handleThemeToggle);
+
+if (mobileMenuToggle) {
+  mobileMenuToggle.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const header = document.querySelector(".site-header");
+    const isOpen = header.classList.toggle("menu-open");
+    mobileMenuToggle.classList.toggle("is-open", isOpen);
+    mobileMenuToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  });
+}
 
 modalBackdrop.addEventListener("click", closeModals);
 
 document.addEventListener("click", (event) => {
+  const header = document.querySelector(".site-header");
+  if (header && header.classList.contains("menu-open")) {
+    if (!event.target.closest(".site-header")) {
+      closeMobileMenu();
+    }
+  }
+
   if (event.target.closest("[data-compose-file]")) {
     composeFile.click();
     return;
@@ -1152,7 +1320,10 @@ document.addEventListener("click", (event) => {
 });
 
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") closeModals();
+  if (event.key === "Escape") {
+    closeModals();
+    closeMobileMenu();
+  }
 });
 
 loginForm.addEventListener("submit", (event) => {

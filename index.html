@@ -35,28 +35,38 @@
         />
       </a>
 
-      <nav class="nav-links" id="primaryNav" aria-label="Navegacao principal">
-        <a href="#home" data-nav="home">Home</a>
-        <a href="#boards" data-nav="boards">Boards</a>
-        <a href="#feed" data-nav="feed">Threads</a>
-        <a href="#profile" data-nav="profile">Perfil</a>
-      </nav>
-
-      <div class="header-tools">
-        <label class="search-shell" for="globalSearch">
-          <span aria-hidden="true"></span>
-          <input id="globalSearch" type="search" placeholder="buscar boards, posts, /g/..." />
-        </label>
-
-        <button class="header-button new-post-button" id="newPostButton" type="button">
-          Novo post
+      <div class="mobile-header-actions">
+        <button class="icon-button mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="headerMenuWrapper">
+          <span class="hamburger-line" aria-hidden="true"></span>
+          <span class="hamburger-line" aria-hidden="true"></span>
+          <span class="hamburger-line" aria-hidden="true"></span>
         </button>
+      </div>
 
-        <button class="profile-button" id="authButton" type="button">Entrar</button>
+      <div class="header-menu-wrapper" id="headerMenuWrapper">
+        <nav class="nav-links" id="primaryNav" aria-label="Navegacao principal">
+          <a href="#home" data-nav="home">Home</a>
+          <a href="#boards" data-nav="boards">Boards</a>
+          <a href="#feed" data-nav="feed">Threads</a>
+          <a href="#profile" data-nav="profile">Perfil</a>
+        </nav>
 
-        <button class="icon-button" id="themeToggle" type="button" aria-label="Alternar tema">
-          <span class="theme-glyph" aria-hidden="true"></span>
-        </button>
+        <div class="header-tools">
+          <label class="search-shell" for="globalSearch">
+            <span aria-hidden="true"></span>
+            <input id="globalSearch" type="search" placeholder="buscar boards, posts, /g/..." />
+          </label>
+
+          <button class="header-button new-post-button" id="newPostButton" type="button">
+            Novo post
+          </button>
+
+          <button class="profile-button" id="authButton" type="button">Entrar</button>
+
+          <button class="icon-button" id="themeToggle" type="button" aria-label="Alternar tema">
+            <span class="theme-glyph" aria-hidden="true"></span>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -92,27 +102,24 @@
       hidden
     >
       <button class="modal-close" type="button" data-close-modal aria-label="Fechar">x</button>
-      <p class="eyebrow">login local</p>
-      <h2 id="loginTitle">Entre para postar</h2>
+      <p class="eyebrow">acesso local</p>
+      <h2 id="loginTitle">Entrar</h2>
+      <p class="login-subtitle">preencha pra entrar no catalogo e comecar a postar.</p>
       <form class="stack-form" id="loginForm">
         <label>
-          Nome
-          <input id="loginName" name="name" type="text" placeholder="Seu nome ou apelido" required />
+          Apelido ou usuario
+          <input id="loginName" name="name" type="text" placeholder="ex: anon_moderno" autocomplete="username" required />
         </label>
         <label>
-          Username
-          <input id="loginHandle" name="handle" type="text" placeholder="ex: anon_moderno" required />
+          Senha
+          <input id="loginPassword" name="password" type="password" placeholder="sua senha local" autocomplete="current-password" required />
         </label>
-        <label>
-          Bio
-          <textarea
-            id="loginBio"
-            name="bio"
-            rows="3"
-            placeholder="Uma frase curta sobre voce"
-          ></textarea>
-        </label>
-        <button class="primary-button" type="submit">Entrar</button>
+        <button class="primary-button wide-button" type="submit">Entrar</button>
+        <div class="login-secondary">
+          <button class="login-link" type="button" id="loginCreateAccount">Criar conta</button>
+          <span class="login-divider" aria-hidden="true">·</span>
+          <button class="login-link" type="button" id="loginAnon">Entrar como anonimo</button>
+        </div>
       </form>
     </section>
 
