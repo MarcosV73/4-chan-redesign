@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Redesign navegavel de uma imageboard anonima com nostalgia do 4chan antigo e UI moderna."
+    />
+    <meta name="theme-color" content="#2f1717" />
+    <title>4chan Old Web Moderno</title>
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/logo/favicon-leaf.png" />
+    <link rel="apple-touch-icon" href="/assets/logo/favicon-leaf.png" />
+    <script>
+      const storedTheme = localStorage.getItem("neo-4chan-imageboard-theme");
+      document.documentElement.dataset.theme = storedTheme || "light";
+    </script>
+  </head>
+  <body>
+    <div class="loading-screen" id="loadingScreen" aria-live="polite">
+      <img src="/assets/logo/favicon-leaf.png" alt="" />
+      <p>carregando boards...</p>
+    </div>
+
+    <a class="skip-link" href="#app">Pular para conteudo</a>
+
+    <header class="site-header" id="top">
+      <a class="brand" href="#home" aria-label="4chan home">
+        <img
+          class="brand-logo"
+          src="/assets/logo/logo-4chan-modern.png"
+          alt="4chan"
+          width="1260"
+          height="450"
+        />
+      </a>
+
+      <nav class="nav-links" id="primaryNav" aria-label="Navegacao principal">
+        <a href="#home" data-nav="home">Home</a>
+        <a href="#boards" data-nav="boards">Boards</a>
+        <a href="#feed" data-nav="feed">Threads</a>
+        <a href="#profile" data-nav="profile">Perfil</a>
+      </nav>
+
+      <div class="header-tools">
+        <label class="search-shell" for="globalSearch">
+          <span aria-hidden="true"></span>
+          <input id="globalSearch" type="search" placeholder="buscar boards, posts, /g/..." />
+        </label>
+
+        <button class="header-button new-post-button" id="newPostButton" type="button">
+          Novo post
+        </button>
+
+        <button class="profile-button" id="authButton" type="button">Entrar</button>
+
+        <button class="icon-button" id="themeToggle" type="button" aria-label="Alternar tema">
+          <span class="theme-glyph" aria-hidden="true"></span>
+        </button>
+      </div>
+    </header>
+
+    <main class="app-view" id="app" tabindex="-1"></main>
+
+    <footer class="site-footer">
+      <a class="brand mini" href="#home" aria-label="Voltar para home">
+        <img
+          class="brand-logo footer-logo"
+          src="/assets/logo/logo-4chan-modern.png"
+          alt="4chan"
+          width="1260"
+          height="450"
+        />
+      </a>
+      <nav aria-label="Links finais">
+        <a href="#home">home</a>
+        <a href="#boards">boards</a>
+        <a href="#feed">feed</a>
+        <a href="#profile">perfil</a>
+      </nav>
+      <p>old imageboard, modern flow</p>
+    </footer>
+
+    <div class="modal-backdrop" id="modalBackdrop" hidden></div>
+
+    <section
+      class="modal"
+      id="loginModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="loginTitle"
+      hidden
+    >
+      <button class="modal-close" type="button" data-close-modal aria-label="Fechar">x</button>
+      <p class="eyebrow">login local</p>
+      <h2 id="loginTitle">Entre para postar</h2>
+      <form class="stack-form" id="loginForm">
+        <label>
+          Nome
+          <input id="loginName" name="name" type="text" placeholder="Seu nome ou apelido" required />
+        </label>
+        <label>
+          Username
+          <input id="loginHandle" name="handle" type="text" placeholder="ex: anon_moderno" required />
+        </label>
+        <label>
+          Bio
+          <textarea
+            id="loginBio"
+            name="bio"
+            rows="3"
+            placeholder="Uma frase curta sobre voce"
+          ></textarea>
+        </label>
+        <button class="primary-button" type="submit">Entrar</button>
+      </form>
+    </section>
+
+    <section
+      class="modal composer-modal"
+      id="composeModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="composeTitle"
+      hidden
+    >
+      <button class="modal-close" type="button" data-close-modal aria-label="Fechar">x</button>
+      <p class="eyebrow">novo post</p>
+      <h2 id="composeTitle">Publicar na comunidade</h2>
+      <form class="stack-form" id="composeForm">
+        <label>
+          Board
+          <select id="composeBoard" name="board"></select>
+        </label>
+        <label>
+          Assunto
+          <input
+            id="composeSubject"
+            name="subject"
+            type="text"
+            maxlength="72"
+            placeholder="ex: Thread de setups antigos"
+          />
+        </label>
+        <label>
+          Texto
+          <textarea
+            id="composeText"
+            name="text"
+            rows="5"
+            maxlength="280"
+            placeholder="Escreva o post inicial da thread..."
+            required
+          ></textarea>
+        </label>
+        <div class="composer-tools" aria-label="Ferramentas do post">
+          <input id="composeFile" name="media" type="file" accept="image/*,.gif" hidden />
+          <button class="tool-button" type="button" data-compose-file>Imagem/GIF</button>
+          <button class="tool-button" type="button" data-toggle-gif>GIF rapido</button>
+          <div class="emoji-row" aria-label="Emojis">
+            <button type="button" data-emoji="&#128293;">&#128293;</button>
+            <button type="button" data-emoji="&#128128;">&#128128;</button>
+            <button type="button" data-emoji="&#10024;">&#10024;</button>
+            <button type="button" data-emoji="&#128064;">&#128064;</button>
+            <button type="button" data-emoji="&#127744;">&#127744;</button>
+          </div>
+        </div>
+        <div class="gif-tray" id="gifTray" hidden>
+          <button type="button" data-gif-style="spark" data-gif-label="sparkle-reaction.gif">
+            sparkle-reaction.gif
+          </button>
+          <button type="button" data-gif-style="static" data-gif-label="crt-static.gif">
+            crt-static.gif
+          </button>
+          <button type="button" data-gif-style="bounce" data-gif-label="oldweb-bounce.gif">
+            oldweb-bounce.gif
+          </button>
+        </div>
+        <div class="compose-preview" id="composePreview" hidden></div>
+        <button class="primary-button" type="submit">Publicar</button>
+      </form>
+    </section>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
